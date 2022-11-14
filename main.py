@@ -1,9 +1,12 @@
 # Angel Higueros - 20460
 # Lab 3 - Game of Life
 
+import contextlib
 import itertools
 from random import *
+
 from pygame import *
+
 from utils import *
 
 
@@ -11,6 +14,10 @@ class GameOfLife(object):
     def __init__(self):
         self.framebuffer = None
         self.current_color = (255, 0, 0)
+        self.celula = None
+        self.semilla = None
+        self.width = 600 #Por defecto
+        self.height = 600 # Por defecti
 
     def create_windows(self, width, height):
 
@@ -26,10 +33,11 @@ class GameOfLife(object):
         self.celula = self.framebuffer.copy()
 
     def point(self, cords):
-        self.framebuffer.set_at(
-            cords,
-            self.current_color
-        )
+        with contextlib.suppress(Exception):
+            self.framebuffer.set_at(
+                cords,
+                self.current_color
+            )
 
     def glColor(self, color):
         self.current_color = color
@@ -47,38 +55,41 @@ class GameOfLife(object):
                 indexX = x - 1
 
                 for _ in range(3):
-                    cords = self.celula.get_at(
-                        (indexX, indexY)
-                    )
-                    pix_color = cords[:3]
-                    if pix_color == (255, 0, 0):
-                        index = [indexX, indexY]
+                    with contextlib.suppress(Exception):
+                        cords = self.celula.get_at(
+                            (indexX, indexY)
+                        )
+                        pix_color = cords[:3]
+                        if pix_color == (255, 0, 0):
+                            index = [indexX, indexY]
 
-                        if index != [x, y]:
-                            direction += 1
+                            if index != [x, y]:
+                                direction += 1
 
-                    indexX += 1
+                        indexX += 1
 
                 contador += 1
-                indexY = indexY + 1
+                indexY += 1
 
             return direction
 
         elif cord[:3] == (0, 0, 0):
             while contador <= 2:
-                indexX = x - 1
+                with contextlib.suppress(Exception):
+                    indexX = x - 1
 
-                for _ in range(3):
-                    cords = self.celula.get_at(
-                        (indexX, indexY)
-                    )
-                    if cords == (255, 0, 0)[:3]:
-                        direction += 1
+                    for _ in range(3):
+                        cords = self.celula.get_at(
+                            (indexX, indexY)
+                        )
+                        
+                        if cords == (255, 0, 0)[:3]:
+                            direction += 1
 
-                    indexX = indexX + 1
+                        indexX += 1
 
-                contador += 1
-                indexY += 1
+                    contador += 1
+                    indexY += 1
 
             return direction
 
@@ -87,28 +98,24 @@ class GameOfLife(object):
 
     def load(self):
         for y, x in itertools.product(range(10, 400), range(10, 400)):
-            rand = self.play(x, y)
-            cords = self.celula.get_at((x, y))
-            get_celula = cords[:3]
+            with contextlib.suppress(Exception):
+                rand = self.play(x, y)
+                cords = self.celula.get_at((x, y))
+                get_celula = cords[:3]
 
-            # Avanzar
-            if rand == 3:
-                self.glColor((255, 0, 0))
-                self.point((x, y))
+                # Avanzar
+                if rand == 3:
+                    self.glColor((255, 0, 0))
+                    self.point((x, y))
 
-            # Reglas de vida
-            elif get_celula == (255, 0, 0) and rand < 2:
-                self.glColor((0, 0, 0))
-                self.point((x, y))
+                # Reglas de vida
+                elif get_celula == (255, 0, 0) and rand < 2 or get_celula == (255, 0, 0) and rand > 3:
+                    self.glColor((0, 0, 0))
+                    self.point((x, y))
 
-            elif get_celula == (255, 0, 0) and rand in [2, 3]:
-                self.glColor((255, 0, 0))
-                self.point((x, y))
-
-            elif get_celula == (255, 0, 0) and rand > 3:
-                self.glColor((0, 0, 0))
-                self.point((x, y))
-
+                elif get_celula == (255, 0, 0) and rand in [2, 3]:
+                    self.glColor((255, 0, 0))
+                    self.point((x, y))
 
 # IMPLEMENTACION
 init()
