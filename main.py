@@ -67,9 +67,9 @@ class GameOfLife(object):
                                 direction += 1
 
                         indexX += 1
-
-                contador += 1
+                
                 indexY += 1
+                contador += 1
 
             return direction
 
@@ -82,14 +82,14 @@ class GameOfLife(object):
                         cords = self.celula.get_at(
                             (indexX, indexY)
                         )
-                        
+
                         if cords == (255, 0, 0)[:3]:
                             direction += 1
 
                         indexX += 1
-
-                    contador += 1
+                    
                     indexY += 1
+                    contador += 1
 
             return direction
 
